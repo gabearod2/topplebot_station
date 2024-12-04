@@ -23,14 +23,18 @@ class IMUToTFNode(Node):
         # Create a TransformStamped message
         transform = TransformStamped()
         transform.header.stamp = self.get_clock().now().to_msg()
-        transform.header.frame_id = 'world'
-        transform.child_frame_id = 'base_link'
+        transform.header.frame_id = 'world'  # Updated parent frame
+        transform.child_frame_id = 'base_link'   # Updated child frame
 
         # Set the orientation from the IMU message
         transform.transform.rotation.x = msg.orientation.x
         transform.transform.rotation.y = msg.orientation.y
         transform.transform.rotation.z = msg.orientation.z
         transform.transform.rotation.w = msg.orientation.w
+
+        transform.transform.translation.x = 0.0635
+        transform.transform.translation.y = 0.0635
+        transform.transform.translation.z = 0.0635
 
         # Broadcast the transform
         self.tf_broadcaster.sendTransform(transform)

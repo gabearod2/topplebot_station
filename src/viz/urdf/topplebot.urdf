@@ -1,18 +1,21 @@
 <?xml version="1.0"?>
+
 <robot name="topplebot">
-  <!-- Define the world link -->
+  <!-- Defining world_link -->
   <link name="world"/>
 
-  <!-- Define the base link -->
+  <!-- Defining base_link -->
   <link name="base_link">
     <visual>
       <geometry>
-        <box size="0.1 0.1 0.1"/>
+        <box size="0.127 0.127 0.127"/>
       </geometry>
       <material name="blue">
         <color rgba="0 0 1 1"/>
       </material>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
     </visual>
+    
     <inertial>
       <mass value="1.0"/>
       <origin xyz="0 0 0"/>
@@ -20,10 +23,32 @@
     </inertial>
   </link>
 
-  <!-- Define a joint connecting the world and base_link -->
+  <!-- Defining a joint connecting the world and base_link -->
   <joint name="base_joint" type="fixed">
     <parent link="world"/>
     <child link="base_link"/>
     <origin xyz="0 0 0" rpy="0 0 0"/>
   </joint>
+
+  <!-- Defining the imu_link -->
+  <link name="imu_link">
+    <visual>
+      <geometry>
+        <sphere radius="0.02"/>
+      </geometry>
+      <material name="red">
+        <color rgba="1 0 0 1"/>
+      </material>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </visual>
+  </link>
+
+  <!-- Defining the joint connecting the base_link and imu_link -->
+  <joint name="imu_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="imu_link"/>
+    <!-- The IMU's offset and rotation from the centroid -->
+    <origin xyz="0.0309 -0.0708 0.0536" rpy="0.61549 0.7854 1.5708"/>
+  </joint>
+
 </robot>

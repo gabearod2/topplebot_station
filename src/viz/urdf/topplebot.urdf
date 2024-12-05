@@ -10,8 +10,8 @@
       <geometry>
         <mesh filename="package://viz/meshes/Orientation_Display_Assy_01.stl" scale="0.001 0.001 0.001"/>
       </geometry>
-      <material name="blue">
-        <color rgba="0 0 1 1"/>
+      <material name="grey">
+        <color rgba="0.5 0.5 0.5 1"/>
       </material>
       <origin xyz="0 0 0" rpy="0 0 0"/>
     </visual>

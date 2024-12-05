@@ -27,7 +27,7 @@
   <joint name="base_joint" type="fixed">
     <parent link="world"/>
     <child link="base_link"/>
-    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <origin xyz="0 0 0" rpy="-0.785398 0.6154797 -0.261799"/>
   </joint>
 
   <!-- Defining the imu_link -->

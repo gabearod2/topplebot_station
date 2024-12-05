@@ -23,8 +23,10 @@ class IMUToTFNode(Node):
         # Create a TransformStamped message
         transform = TransformStamped()
         transform.header.stamp = self.get_clock().now().to_msg()
-        transform.header.frame_id = 'world'  # Updated parent frame
-        transform.child_frame_id = 'base_link'   # Updated child frame
+        transform.header.frame_id = 'base_link'  # Updated parent frame
+        transform.child_frame_id = 'imu_link'   # Updated child frame
+
+        # if the first loop, log the current orientation,
 
         # Set the orientation from the IMU message
         transform.transform.rotation.x = msg.orientation.x

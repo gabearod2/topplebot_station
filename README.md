@@ -23,4 +23,4 @@ source install/seup.bash &&
 ros2 launch viz topplebot_rviz.launch.py
 ```
 
-Watch the dynamics dispaly!
+Watch the dynamics display!

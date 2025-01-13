@@ -14,12 +14,12 @@ On your control station, run the micro-ROS agent:
 docker run -it --rm --net=host microros/micro-ros-agent:humble udp4 --port 8888 -v6
 ```
 
-You should see the messages coming from the ToppleBot. The following commands will run the visualizer:
+You should see the messages coming from the ToppleBot. The following commands, in another terminal window, will run the visualizer:
 
 ```
 source /opt/ros/humble/setup.bash &&
-colcon build --packages-select viz --siymlink-install &&
-source install/seup.bash &&
+colcon build --packages-select viz --symlink-install &&
+source install/setup.bash &&
 ros2 launch viz topplebot_rviz.launch.py
 ```
 

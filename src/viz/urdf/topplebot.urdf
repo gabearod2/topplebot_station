@@ -1,10 +1,7 @@
 <?xml version="1.0"?>
-
 <robot name="topplebot">
-  <!-- Defining world_link -->
-  <link name="world"/>
 
-  <!-- Defining base_link -->
+  <!-- Base link of the cube -->
   <link name="base_link">
     <visual>
       <geometry>
@@ -13,9 +10,7 @@
       <material name="grey">
         <color rgba="0.5 0.5 0.5 1"/>
       </material>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
     </visual>
-    
     <inertial>
       <mass value="1.0"/>
       <origin xyz="0 0 0"/>
@@ -23,9 +18,21 @@
     </inertial>
   </link>
 
-  <!-- Defining a joint connecting the world and base_link -->
-  <joint name="base_joint" type="fixed">
-    <parent link="world"/>
+  <!-- Node_0 link (anchor point in the TF tree) -->
+  <link name="node_0">
+    <visual>
+      <geometry>
+        <box size="0.01 0.01 0.01"/>
+      </geometry>
+      <material name="blue">
+        <color rgba="0 0 1 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <!-- Joint connecting base_link to node_0 -->
+  <joint name="base_link_joint" type="fixed">
+    <parent link="node_0"/>
     <child link="base_link"/>
     <origin xyz="0 0 0" rpy="0 0 0"/>
   </joint>

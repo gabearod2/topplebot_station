@@ -24,3 +24,9 @@ ros2 launch viz topplebot_rviz.launch.py
 ```
 
 Watch the dynamics display!
+
+Shortened command for debugging:
+
+```
+source /opt/ros/humble/setup.bash && ros2 launch viz topplebot_rviz.launch.py
+```

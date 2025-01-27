@@ -18,7 +18,7 @@
     </inertial>
   </link>
 
-  <!-- Node_0 link (anchor point in the TF tree) -->
+  <!-- node_0 link (anchor point in the TF tree) -->
   <link name="node_0">
     <visual>
       <geometry>
@@ -28,12 +28,65 @@
         <color rgba="0 0 1 1"/>
       </material>
     </visual>
+    <inertial>
+      <mass value="0.01"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
+    </inertial>
   </link>
 
-  <!-- Joint connecting base_link to node_0 -->
+  <!-- world link (anchor point in the TF tree) -->
+  <link name="world">
+    <visual>
+      <geometry>
+        <box size="0.01 0.01 0.01"/>
+      </geometry>
+      <material name="green">
+        <color rgba="0 1 0 1"/>
+      </material>
+    </visual>
+    <inertial>
+      <mass value="0.01"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
+    </inertial>
+  </link>
+
+  <!-- balancing_node link (anchor point in the TF tree) -->
+  <link name="balancing_node">
+    <visual>
+      <geometry>
+        <box size="0.01 0.01 0.01"/>
+      </geometry>
+      <material name="red">
+        <color rgba="1 0 0 1"/>
+      </material>
+    </visual>
+    <inertial>
+      <mass value="0.01"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
+    </inertial>
+  </link>
+
+  <!-- Joint connecting world to node_0 -->
+  <joint name="world_joint" type="fixed">
+    <parent link="world"/>
+    <child link="node_0"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Joint connecting node_0 to base_link -->
   <joint name="base_link_joint" type="fixed">
     <parent link="node_0"/>
     <child link="base_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Joint connecting node_0 to balancing_node -->
+  <joint name="balancing_node_joint" type="fixed">
+    <parent link="node_0"/>
+    <child link="balancing_node"/>
     <origin xyz="0 0 0" rpy="0 0 0"/>
   </joint>
 

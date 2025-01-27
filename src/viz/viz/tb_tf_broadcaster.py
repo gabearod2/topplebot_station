@@ -57,6 +57,12 @@ class OdometryNode(Node):
         self.topple_translation = np.zeros((1,3)) # world frame
         self.current_topple_translation = np.zeros((1,3))
         self.last_bn_index = 0 # initial balancing node index
+        self.q_correction = np.array([
+            -0.68031357,
+            -0.20766731,
+            -0.21457080,
+             0.66933332
+        ])
 
     def imu_callback(self, msg):
 
@@ -67,6 +73,12 @@ class OdometryNode(Node):
             msg.orientation.z,
             msg.orientation.w
         ])
+
+        self.get_logger().info(f'Current Quaternion: {self.q}')
+
+        self.q = self.rotate_quaternion(self.q, self.q_correction)
+        
+        self.get_logger().info(f'Corrected Quaternion: {self.q}')
 
         ### Handling the Initial Position ###
 
@@ -84,6 +96,12 @@ class OdometryNode(Node):
             msg.linear_acceleration.x,
             msg.linear_acceleration.y,
             msg.linear_acceleration.z])
+        
+        self.get_logger().info(f'Current Linear Acceleration Vector: {self.bl_g}') 
+        
+        # Have to correct this vector as well?
+        self.bl_g = self.rotate_vec(self.q_correction, self.bl_g)
+
         self.get_logger().info(f'Updated Linear Acceleration Vector: {self.bl_g}') 
         
         #-np.linalg.norm([self.length/2, self.length/2])
@@ -91,7 +109,7 @@ class OdometryNode(Node):
         # Find the vectors from base_link node to each node of the cube in the base_link frame
         for i in range(8):
             self.bl_node_vectors[i] = self.bn_node_positions[i,:] - self.bn_node_positions[8,:]
-            self.get_logger().info(f'Node Vectors: {self.bl_node_vectors}') 
+            #self.get_logger().info(f'Node Vectors: {self.bl_node_vectors}') 
             self.bl_node_vectors_diffs = self.bl_node_vectors[i] - self.bl_g[0]
 
         
@@ -104,13 +122,12 @@ class OdometryNode(Node):
         if self.bn_index != self.last_bn_index:
             self.current_topple_translation = self.bn_node_positions[self.bn_index] - self.bn_node_positions[self.last_bn_index]
             print(self.current_topple_translation)
-            self.get_logger().info(f'Current Topple Translation: {self.current_topple_translation}')
+            #self.get_logger().info(f'Current Topple Translation: {self.current_topple_translation}')
             self.bn_node_positions = self.bn_node_positions - self.current_topple_translation
-            self.get_logger().info(f'Updated BN Node Positions: {self.bn_node_positions}') 
+            #self.get_logger().info(f'Updated BN Node Positions: {self.bn_node_positions}') 
             self.topple_translation += self.current_topple_translation
 
         ### Update Node Positions based on Current Orientation ###
-
         for i in range(9):
             self.bn_node_positions[i] = self.rotate_vec(self.q, self.bn_node_positions[i])
 
@@ -188,6 +205,36 @@ class OdometryNode(Node):
         v_rot = np.dot(rot_matrix, v)
 
         return v_rot
+
+    def rotate_quaternion(self, q1, q2):
+        """
+        Rotate a quaternion q1 using another quaternion q2.
+        
+        Params:
+        - q1: numpy array of shape (4,), the quaternion to be rotated (x, y, z, w)
+        - q2: numpy array of shape (4,), the rotation quaternion (x, y, z, w)
+        
+        Returns:
+        - q_rot: numpy array of shape (4,), the rotated quaternion (x, y, z, w)
+        """
+        # Normalize the quaternions to ensure they are unit quaternions
+        q1 = q1 / np.linalg.norm(q1)
+        q2 = q2 / np.linalg.norm(q2)
+        
+        # Extract components of q1 and q2
+        x1, y1, z1, w1 = q1
+        x2, y2, z2, w2 = q2
+        
+        # Compute the quaternion product q_rot = q2 * q1
+        x_rot = w2 * x1 + x2 * w1 + y2 * z1 - z2 * y1
+        y_rot = w2 * y1 - x2 * z1 + y2 * w1 + z2 * x1
+        z_rot = w2 * z1 + x2 * y1 - y2 * x1 + z2 * w1
+        w_rot = w2 * w1 - x2 * x1 - y2 * y1 - z2 * z1
+        
+        # Combine the components into the rotated quaternion
+        q_rot = np.array([x_rot, y_rot, z_rot, w_rot])
+        
+        return q_rot
 
 
 def main(args=None):

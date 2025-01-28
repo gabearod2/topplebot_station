@@ -18,24 +18,7 @@
     </inertial>
   </link>
 
-  <!-- node_0 link (anchor point in the TF tree) -->
-  <link name="node_0">
-    <visual>
-      <geometry>
-        <box size="0.01 0.01 0.01"/>
-      </geometry>
-      <material name="blue">
-        <color rgba="0 0 1 1"/>
-      </material>
-    </visual>
-    <inertial>
-      <mass value="0.01"/>
-      <origin xyz="0 0 0"/>
-      <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
-    </inertial>
-  </link>
-
-  <!-- world link (anchor point in the TF tree) -->
+  <!-- World link (anchor point in the TF tree) -->
   <link name="world">
     <visual>
       <geometry>
@@ -52,7 +35,7 @@
     </inertial>
   </link>
 
-  <!-- balancing_node link (anchor point in the TF tree) -->
+  <!-- Balancing node link -->
   <link name="balancing_node">
     <visual>
       <geometry>
@@ -69,24 +52,17 @@
     </inertial>
   </link>
 
-  <!-- Joint connecting world to node_0 -->
-  <joint name="world_joint" type="fixed">
+  <!-- Joint connecting world to balancing_node -->
+  <joint name="world_to_balancing_node" type="fixed">
     <parent link="world"/>
-    <child link="node_0"/>
-    <origin xyz="0 0 0" rpy="0 0 0"/>
-  </joint>
-
-  <!-- Joint connecting node_0 to base_link -->
-  <joint name="base_link_joint" type="fixed">
-    <parent link="node_0"/>
-    <child link="base_link"/>
-    <origin xyz="0 0 0" rpy="0 0 0"/>
-  </joint>
-
-  <!-- Joint connecting node_0 to balancing_node -->
-  <joint name="balancing_node_joint" type="fixed">
-    <parent link="node_0"/>
     <child link="balancing_node"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Joint connecting balancing_node to base_link -->
+  <joint name="balancing_node_to_base_link" type="fixed">
+    <parent link="balancing_node"/>
+    <child link="base_link"/>
     <origin xyz="0 0 0" rpy="0 0 0"/>
   </joint>
 

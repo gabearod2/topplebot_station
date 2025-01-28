@@ -6,17 +6,6 @@ from sensor_msgs.msg import Imu
 from geometry_msgs.msg import TransformStamped
 import tf2_ros
 
-'''
-This node publishes the Odometry for the robot. 
-
-Needs the following debugging:
-TODO: Ensure the quaternion is handled correctly
-TODO: Add logging at each step
-TODO: Edit urdf so that all frames are visualized
-TODO: Ensure the calibration axes work correctly
-'''
-
-
 class OdometryNode(Node):
     def __init__(self):
         super().__init__('odometry_broadcaster')
@@ -51,14 +40,13 @@ class OdometryNode(Node):
         self.bl_a = np.zeros((1,3))
         self.bl_g = np.zeros((1,3))
         self.q = np.zeros((1,4))
-        self.bl_node_vectors = np.zeros((8, 3))# in the base_link frame
-        #self.bl_node_vectors_diffs = np.zeros((9, 3))
-        self.bn_node_positions = np.zeros((8,3))
-        self.n0_node_positions = np.zeros((1,3))
-        self.topple_translation = np.zeros((1,3)) # world frame
-        self.current_topple_translation = np.zeros((1,3))
+        self.bl_node_vectors = np.zeros((8, 3)) # in the base_link frame
+        self.bl_node_vectors_diffs = np.zeros((8, 1)) # 
+
+        self.bn_position = np.zeros((1,3)) # world frame
+        self.world_node_positions = np.zeros((1,3))
         self.last_bn_index = 0 # initial balancing node index
-        self.bn_index = 0
+        self.current_bn_index = 0 # initial balancing node index
 
         # TODO: Make a function to make this dynamic?
         self.q_correction = np.array([
@@ -73,7 +61,7 @@ class OdometryNode(Node):
         ''' Handling the Initial Position '''
         # Initializing with node 0 as the balancing node, world and bn frames are aligned.
         if self.first_run: 
-            self.bn_node_positions = self.initial_node_positions
+            self.world_node_positions = self.initial_node_positions
             self.first_run = False
         
         ''' Correcting for the Initial Orientation Rotation and Getting the Current Orientation '''
@@ -88,7 +76,6 @@ class OdometryNode(Node):
         # Rotating the quaternion by the initial rotation offset
         self.q = self.rotate_quaternion(self.q, self.q_correction)
         self.get_logger().info(f'Corrected Quaternion: {self.q}')
-
 
         ''' Transforming the Acceleration Vector '''
         # First getting the raw linear acceleeration vector 
@@ -110,41 +97,54 @@ class OdometryNode(Node):
         self.bl_g = self.bl_a 
  
         ''' Determining the Balancing Node '''
-        # Findiung the vectors from base_link node to each node of the cube in the base_link frame
+        # Finding the vectors from base_link node to each node of the cube in the base_link frame
         for i in range(8):
             # Subtracting each node position from the base_link node position and normalizing the resulting vector
-            self.bl_node_vectors[i] = self.bn_node_positions[i,:] - self.bn_node_positions[8,:]
+            self.bl_node_vectors[i] = self.node_positions[i,:] - self.node_positions[8,:]
             self.bl_node_vectors[i] = self.bl_node_vectors[i]/np.linalg.norm(self.bl_node_vectors[i])
-            self.get_logger().info(f'Node Vectors: {self.bl_node_vectors}') 
-            # Finding the difference between the node vectors and the gravity vectos in the base link frame
-            self.bl_node_vectors_diffs = np.linalg.norm(self.bl_node_vectors[i] - self.bl_g[0])
-            self.get_logger().info(f'Node Vector Differences from g: {self.bl_node_vector_diffs}')
+            # Finding the absolute difference between the node vectors and the gravity vectos in the base link frame
+            self.bl_node_vectors_diffs[i] = abs(self.bl_node_vectors[i] - self.bl_g[0])
+            self.bl_node_vectors_diffs[i] = np.linalg.norm(self.bl_node_vectors_diffs[i])     
+        self.get_logger().info(f'Node Vectors: {self.bl_node_vectors}') 
+        self.get_logger().info(f'Node Vector Differences from g: {self.bl_node_vectors_diffs}')
         # Choosing the balancing node as the one with it's vector most in line with the base_link gravity vector.
-        self.bn_index = np.argmin(self.bl_node_vectors_diffs)
-        self.get_logger().info(f'The Current Balancing Node:{self.bn_index}')
+        self.current_bn_index = np.argmin(self.bl_node_vectors_diffs)
+        self.get_logger().info(f'The Current Balancing Node:{self.current_bn_index}')
 
+        #TODO: REVIEW AND ADD LOGGING TO THE REMAINING CODE:
 
-        # TODO: REVIEW AND ADD LOGGING TO THE REMAINING CODE:
+        ''' Determining TFs ''' # <-- THE HARDEST PART
 
-        ''' Determining node positions in the world frame from the Balancing Node '''
+        # Find vectors from the balancing node and ROTATE THAT?
+
+        # The indexing is what gets messed up.
+
+        # Update node positions based on the current balancing node
+        if self.current_bn_index != self.last_bn_index:
+            self.bn_position = self.node_positions + (self.)
+        else:
+            self.world_node_positions = self.rotate_vec()
+
+        # Determine tf from world frame to 
+        
         # Determine if there is a translation and keep adding them up.
         if self.bn_index != self.last_bn_index:
-            self.current_topple_translation = self.bn_node_positions[self.bn_index] - self.bn_node_positions[self.last_bn_index]
-            print(self.current_topple_translation)
-            #self.get_logger().info(f'Current Topple Translation: {self.current_topple_translation}')
+            self.bn_node_position = 
+            self.node_positions = self.bn_node_positions[self.bn_index] - self.bn_node_positions[self.last_bn_index]
+            self.get_logger().info(f'Current Topple Translation: {self.current_topple_translation}')
             self.bn_node_positions = self.bn_node_positions - self.current_topple_translation
-            #self.get_logger().info(f'Updated BN Node Positions: {self.bn_node_positions}') 
-            self.topple_translation += self.current_topple_translation
-
-        ''' Update Node Positions based on Current Orientation '''
-        for i in range(9):
-            self.bn_node_positions[i] = self.rotate_vec(self.q, self.bn_node_positions[i])
+            self.get_logger().info(f'Updated BN Node Positions: {self.bn_node_positions}') 
+            self.topple_translation += self.current_topple_translation        
 
         ''' Broadcasting the transforms '''
         self.translation = self.topple_translation.flatten().tolist()
-        self.broadcast_transform('node_0', 'base_link',self.initial_node_positions[8,:],  self.q)
-        self.broadcast_transform('balancing_node', 'node_0',self.bn_node_positions[0,:])
+        self.broadcast_transform('balancing_node', 'base_link',self.bn_node_positions[0,:])
         self.broadcast_transform('world', 'balancing_node',self.translation)
+
+        ''' Updating the Node Positions and Orientation for the Next Iteration'''
+        for i in range(9):
+            self.bn_node_positions[i] = self.rotate_vec(self.q, self.bn_node_positions[i])
+        self.last_bn_index = self.bn_index
 
     def broadcast_transform(self, parent_frame, child_frame, translation, rotation=None):
         """Broadcast a transform between two frames."""
@@ -243,6 +243,26 @@ class OdometryNode(Node):
         q_rot = np.array([x_rot, y_rot, z_rot, w_rot])
         
         return q_rot
+    
+    def inverse_quaternion(self, q):
+        """
+        Generate the inverse quaternion from a given quaternion
+
+        Params:
+        - q: numpy array of shape (4,), the quaternion to be inverted (x, y, z, w)
+
+        Returns:
+        - q_inv: numpy array of shape (4,), the inverse quaternion (-x,-y,-z, w)
+        """
+        # Normalize the quaternion to ensure it is a unit quaternion
+        q = q / np.linalg.norm(q)
+
+        # Extract the components of q
+        x, y, z, w = q
+
+        # Creat and return the inverse quaternion.
+        q_inv = np.array([-x, -y, -z, w])
+        return q_inv
 
 
 def main(args=None):

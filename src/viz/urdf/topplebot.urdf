@@ -4,7 +4,7 @@
   <!-- Base link of the cube -->
   <link name="base_link">
     <visual>
-    <origin xyz="0 0 0.025">
+    <origin xyz="0 0 -0.05"/>
       <geometry>
         <mesh filename="package://viz/meshes/Calibration_Tool_01.stl" scale="0.001 0.001 0.001"/>
       </geometry>

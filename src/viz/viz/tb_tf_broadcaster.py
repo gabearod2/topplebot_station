@@ -133,8 +133,8 @@ class OdometryNode(Node):
         self.current_bn_index_w = np.argmin(self.norms_w)
         self.current_bn_index_bl = np.argmin(self.norms_bl)
 
-        self.get_logger().info(f'The Current Balancing Node in Base_link Frame:{self.current_bn_index}')
-        self.get_logger().info(f'The Current Balancing Node in World Frame:{self.current_bn_index}')
+        self.get_logger().info(f'The Current Balancing Node in Base_link Frame:{self.current_bn_index_bl}')
+        self.get_logger().info(f'The Current Balancing Node in World Frame:{self.current_bn_index_w}')
         
         ''' Determining the Translation TFs ''' 
         # Determine if the balancing node changed, and find the displacement

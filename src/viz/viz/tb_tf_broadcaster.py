@@ -156,8 +156,8 @@ class OdometryNode(Node):
         self.bl_translation = self.bl_translation.flatten().tolist()
         self.get_logger().info(f'The Current Base_Link Translation:{self.bl_translation}')
         self.bl_rotation = self.q.flatten().tolist()
-        self.broadcast_transform('balancing_node', 'base_link',[0,0,0], [0,0,0,1])
-        self.broadcast_transform('world', 'balancing_node',[0,0,0], [0,0,0,1])
+        self.broadcast_transform('balancing_node', 'base_link',[0.0,0.0,0.0], [0,0,0,1])
+        self.broadcast_transform('world', 'balancing_node',[0.0,0.0,0.0], [0,0,0,1])
 
     def broadcast_transform(self, parent_frame, child_frame, translation, rotation=None):
         """Broadcast a transform between two frames."""

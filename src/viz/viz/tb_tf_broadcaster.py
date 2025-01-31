@@ -142,14 +142,16 @@ class OdometryNode(Node):
         if self.current_bn_index_w != self.last_bn_index_w:
             self.bn_displacement = self.w_node_positions[self.current_bn_index_w,:] - self.w_node_positions[self.last_bn_index_w,:]   
         else:
-            self.bn_displacement = np.zeros(3)    
-        
-        # TODO: Log the last 30 index numbers and if the last 15 are different, then 
-        self.last_bn_index_w = self.current_bn_index_w
+            self.bn_displacement = np.zeros(3)       
 
+        self.get_logger().info(f'The Current Balancing Node displacement in the World Frame:{self.bn_displacement}')   
+        
         # Update the translations (base_link and balancing_node
         self.bl_translation = self.w_node_positions[8,:] - self.w_node_positions[self.current_bn_index_w,:]
         self.bn_translation = self.bn_translation + self.bn_displacement
+
+        self.get_logger().info(f'The Current Translation for the Balancing Node Frame in the World Frame:{self.bn_translation} ')
+        self.get_logger().info(f'The Current Translation for the Base_Link Frame in the Balancing Node Frame:{self.bl_translation}')
 
         ''' Broadcasting the full Transforms '''
         self.bn_translation = self.bn_translation.flatten().tolist()
@@ -159,6 +161,9 @@ class OdometryNode(Node):
         self.bl_rotation = self.q.flatten().tolist()
         self.broadcast_transform('balancing_node', 'base_link',[0.0,0.0,0.0], [0,0,0,1])
         self.broadcast_transform('world', 'balancing_node',[0.0,0.0,0.0], [0,0,0,1])
+
+        # TODO: Log the last 30 index numbers and if the last 15 are different, then 
+        self.last_bn_index_w = self.current_bn_index_w
 
     def broadcast_transform(self, parent_frame, child_frame, translation, rotation=None):
         """Broadcast a transform between two frames."""

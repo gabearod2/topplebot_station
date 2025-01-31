@@ -53,7 +53,7 @@
 [tb_tf_broadcaster-2]  [ 0.0217902   0.03534468 -0.05723583]
 [tb_tf_broadcaster-2]  [ 0.06919001  0.02371657 -0.04637097]
 [tb_tf_broadcaster-2]  [ 0.05547961 -0.02345292 -0.03704015]
-[tb_tf_broadcaster-2]  [ 0.034595    0.01185828 -0.02318549]]
+[tb_tf_broadcaster-2]  [ 0.034595    0.01185828 -0.02318549]]  <-- MAKES NO SENSE...
 [tb_tf_broadcaster-2] [INFO] [1738359326.090191329] [imu_to_tf_broadcaster]: All of the Base_Link Node Positions: [[ 0.0252507  -0.02623004 -0.02343901]
 [tb_tf_broadcaster-2]  [ 0.01480428  0.02136872 -0.03462963]
 [tb_tf_broadcaster-2]  [-0.03340717  0.01325089 -0.02415315]

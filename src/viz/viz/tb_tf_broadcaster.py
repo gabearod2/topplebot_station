@@ -82,14 +82,15 @@ class OdometryNode(Node):
 
         ''' Handling the Initial Position and First Iteration '''
         if self.first_run: 
-            self.w_node_positions = np.copy(self.initial_w_node_positions)
-            self.bl_node_positions = np.copy(self.initial_bl_node_positions)
             self.q_correction = self.inverse_quaternion(self.q)
             self.first_run = False
-        
+              
         self.get_logger().info(f'Correction Quaternion: {self.q_correction}')
         self.q = self.rotate_quaternion(self.q, self.q_correction)
         self.get_logger().info(f'World Frame Quaternion: {self.q}')
+
+        self.w_node_positions = np.copy(self.initial_w_node_positions)
+        self.bl_node_positions = np.copy(self.initial_bl_node_positions)
 
         ''' Updating the Location of the Nodes based on the Current Orientation'''
         for i in range(len(self.w_node_positions)):

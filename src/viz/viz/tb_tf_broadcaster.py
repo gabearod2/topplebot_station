@@ -156,8 +156,8 @@ class OdometryNode(Node):
         self.bl_translation = self.bl_translation.flatten().tolist()
         self.get_logger().info(f'The Current Base_Link Translation:{self.bl_translation}')
         self.bl_rotation = self.q.flatten().tolist()
-        self.broadcast_transform('balancing_node', 'base_link',self.bn_translation, self.bl_rotation)
-        self.broadcast_transform('world', 'balancing_node',[self.bl_translation[0], self.bl_translation[1],0.0], [0,0,0,1])
+        self.broadcast_transform('balancing_node', 'base_link',self.bl_translation, self.bl_rotation)
+        self.broadcast_transform('world', 'balancing_node',[self.bn_translation[0], self.bn_translation[1],0.0], [0,0,0,1])
 
         # TODO: Log the last 30 index numbers and if the last 15 are different, then 
         self.last_bn_index_w = self.current_bn_index_w

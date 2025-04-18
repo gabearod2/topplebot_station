@@ -23,7 +23,7 @@ class OdometryNode(Node):
         self.get_logger().info("Odometry broadcaster started")
 
         # Initial Node Positions in Both Frames
-        self.length = 0.1 #[m]
+        self.length = 0.15 #[m]
         self.initial_w_node_positions = np.array([ 
             [0,             0,             0            ], # node 0
             [0,             self.length,   0            ], # node 1
@@ -60,7 +60,7 @@ class OdometryNode(Node):
     def imu_callback(self, msg):
         
         ''' Acquiring AHRS Current Quaternion in Calibration Frame'''
-        self.q = np.array([msg.orientation.z, -msg.orientation.x, -msg.orientation.y, msg.orientation.w], dtype=np.float64)
+        self.q = np.array([msg.orientation.z, msg.orientation.y, -msg.orientation.x, msg.orientation.w], dtype=np.float64)
 
         ''' Handling the Initial Position and First Iteration '''
         if self.first_run: 

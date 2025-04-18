@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'behavior_commands'
+package_name = 'control_commands'
 
 setup(
     name=package_name,
@@ -15,12 +15,12 @@ setup(
     zip_safe=True,
     maintainer='Gabriel Rodriguez',
     maintainer_email='gabearod2@gmail.com',
-    description='Behavior command package for ToppleBot',
+    description='Control command package for ToppleBot',
     license='MIT',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'command_test_node = behavior_commands.command_test_node:main'
+            'command_test_node = control_commands.command_test_node:main'
         ],
     },
 )
